@@ -1,0 +1,18 @@
+/* Style for the success and failure messages */
+.verification-status {
+    margin-top: 20px;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.success {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.failure {
+    background-color: #f44336; /* Red */
+    color: white;
+}
