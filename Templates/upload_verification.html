@@ -3,75 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document Upload</title>
-    <link rel="stylesheet" href="/static/css/style.css">  <!-- Link to your CSS -->
-
-    <!-- JavaScript for dd-mm-yyyy date validation -->
-    <script>
-        function validateDate() {
-            var dob = document.getElementById("dob").value;
-            var regex = /^\d{2}-\d{2}-\d{4}$/;
-
-            if (!regex.test(dob)) {
-                alert("Please enter the date in dd-mm-yyyy format.");
-                return false;
-            }
-
-            var parts = dob.split("-");
-            var day = parseInt(parts[0], 10);
-            var month = parseInt(parts[1], 10) - 1; // JavaScript months are 0-based
-            var year = parseInt(parts[2], 10);
-
-            var dobDate = new Date(year, month, day);
-            var currentYear = new Date().getFullYear();
-
-            if (year > currentYear) {
-                alert("The date of birth cannot be in the future.");
-                return false;
-            }
-
-            if (year < 1900) {
-                alert("Please enter a valid year (greater than 1900).");
-                return false;
-            }
-
-            if (
-                dobDate.getDate() !== day ||
-                dobDate.getMonth() !== month ||
-                dobDate.getFullYear() !== year
-            ) {
-                alert("Invalid date. Please enter a valid date.");
-                return false;
-            }
-
-            return true;
+    <title>Document Upload and Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f7fc;
+            color: #333;
         }
-    </script>
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            min-width: 400px;
+            max-width: 600px;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        input[type="file"], 
+        input[type="text"], 
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .status-message {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .failure {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                width: 80%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h2>Upload Documents for Verification</h2>
-        <form method="POST" enctype="multipart/form-data" onsubmit="return validateDate()">
-            <!-- Government Issued ID Upload Field -->
-            <label for="govt_id">Government Issued ID (e.g., Aadhar, Passport):</label>
-            <input type="file" name="govt_id" id="govt_id" accept="image/*, .pdf" required>
-
-            <!-- 12th Grade Marks Card Upload Field -->
-            <label for="marks_card">12th Grade Marks Card:</label>
-            <input type="file" name="marks_card" id="marks_card" accept="image/*, .pdf" required>
-
-            <!-- Submit Button -->
-            <button type="submit">Upload and Verify</button>
-
-            <!-- Space to enter Name and DOB (below the button) -->
-            <div>
-                <label for="name">Full Name:</label>
-                <input type="text" name="name" id="name" placeholder="Enter your full name" required>
-
-                <label for="dob">Date of Birth (dd-mm-yyyy):</label>
-                <input type="text" name="dob" id="dob" placeholder="dd-mm-yyyy" pattern="\d{2}-\d{2}-\d{4}" required>
+        <h1>Upload Documents for Verification</h1>
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="govt_id">Government ID (e.g., Aadhar - for verification of DOB):</label>
+                <input type="file" name="govt_id" required>
             </div>
+
+            <div class="form-group">
+                <label for="marks_card">ID/Document that can verify your name</label>
+                <input type="file" name="marks_card" required>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Name (as per documents):</label>
+                <input type="text" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="dob">Date of Birth (as per documents):</label>
+                <input type="text" name="dob" required placeholder="DD/MM/YYYY">
+            </div>
+
+            <button type="submit">Submit</button>
         </form>
+
+        {% if verification_status %}
+            <div class="status-message">
+                <h2 class="{{ status_class }}">{{ verification_status }}</h2>
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>
